@@ -43,7 +43,7 @@ const getSample = (idx) => {
 }
 
 let currentCol = 0;
-
+export const getCurrentCol = () => currentCol;
 const getGrid = () => sequencerGrid;
 
 setInterval( () => {

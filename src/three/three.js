@@ -1,5 +1,5 @@
 const THREE = require('three');
-import { sequencerGrid, analyser, dataArray } from '../sample';
+import { sequencerGrid, analyser, dataArray, getCurrentCol } from '../sample';
 
 
 /* =====================================
@@ -40,6 +40,19 @@ for (let row = 0; row < 4; row++) {
     scene.add(cube);
   }
 }
+
+
+/* =====================================
+    HEAD
+  ======================================== */
+
+  const headGeometry = new THREE.BoxGeometry( 0.5, 3.75, 1, 2, 2 );
+  const headMaterial = new THREE.MeshPhongMaterial( { color: 0xFFFC15, transparent: true, opacity: 0.3, wireframe: true } );
+  const head = new THREE.Mesh( headGeometry, headMaterial );
+  head.position.z = -0.5;
+  head.position.x = -6;
+  head.position.y = 0.5;
+  scene.add(head);
 
 /* =====================================
     OSCILLOSCOPE CUBES
@@ -105,6 +118,12 @@ const dataArray = new Uint8Array(128);
 
 export const animate = () => {
   requestAnimationFrame( animate );
+
+
+  head.position.x = -6 + (getCurrentCol() * 0.75);
+  // light2.position.x = -6 + (getCurrentCol() * 0.75);
+
+
   analyser.getByteTimeDomainData(dataArray);
 
   for (let i = 0; i < 128; i++) {
