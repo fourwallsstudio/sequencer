@@ -1,0 +1,19 @@
+{
+  "name": "sequencer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack --watch src/entry.js public/bundle.js",
+    "start": "node server/start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.4",
+    "three": "^0.87.1",
+    "webpack": "^3.5.6"
+  }
+}
