@@ -96,7 +96,12 @@ const THREE = __webpack_require__(2);
 const scene = new THREE.Scene();
 /* unused harmony export scene */
 
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth/window.innerHeight,
+  0.1,
+  1000
+);
 /* unused harmony export camera */
 
 camera.position.z = 5;
@@ -140,12 +145,18 @@ for (let row = 0; row < 4; row++) {
   ======================================== */
 
   const headGeometry = new THREE.BoxGeometry( 0.5, 3.75, 1, 2, 2 );
-  const headMaterial = new THREE.MeshPhongMaterial( { color: 0xFFFC15, transparent: true, opacity: 0.3, wireframe: true } );
+  const headMaterial = new THREE.MeshPhongMaterial({
+    color: 0xFFFC15,
+    transparent: true,
+    opacity: 0.3,
+    wireframe: true
+  });
   const head = new THREE.Mesh( headGeometry, headMaterial );
   head.position.z = -0.5;
   head.position.x = -6;
   head.position.y = 0.5;
   scene.add(head);
+
 
 /* =====================================
     OSCILLOSCOPE CUBES
@@ -212,10 +223,7 @@ const dataArray = new Uint8Array(128);
 const animate = () => {
   requestAnimationFrame( animate );
 
-
   head.position.x = -6 + (Object(__WEBPACK_IMPORTED_MODULE_0__sample__["b" /* getCurrentCol */])() * 0.75);
-  // light2.position.x = -6 + (getCurrentCol() * 0.75);
-
 
   __WEBPACK_IMPORTED_MODULE_0__sample__["a" /* analyser */].getByteTimeDomainData(dataArray);
 
@@ -44478,13 +44486,12 @@ const sequencerGrid = [];
 
 for (let i = 0; i < 16; i++) {
   sequencerGrid.push([false, false, false, false])
-}
+};
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 const analyser = audioCtx.createAnalyser();
 /* harmony export (immutable) */ __webpack_exports__["a"] = analyser;
-
 
 analyser.fftSize = 256;
 const bufferLength = analyser.frequencyBinCount;
@@ -44520,6 +44527,7 @@ const getSample = (idx) => {
 
     request.send();
 }
+
 
 let currentCol = 0;
 const getCurrentCol = () => currentCol;

@@ -1,12 +1,11 @@
 export const sequencerGrid = [];
 for (let i = 0; i < 16; i++) {
   sequencerGrid.push([false, false, false, false])
-}
+};
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 export const analyser = audioCtx.createAnalyser();
-
 analyser.fftSize = 256;
 const bufferLength = analyser.frequencyBinCount;
 analyser.connect(audioCtx.destination);
@@ -41,6 +40,7 @@ const getSample = (idx) => {
 
     request.send();
 }
+
 
 let currentCol = 0;
 export const getCurrentCol = () => currentCol;
