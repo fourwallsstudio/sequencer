@@ -1,6 +1,6 @@
 const THREE = require('three');
-import { drumSequencerGrid, analyser, dataArray, getCurrentCol } from '../sample';
-import { createDrumCubes, createMusicCubes, createOsciCubes, createHead } from './shapes';
+import { drumSequencerGrid, musicSequencerGrid, analyser, dataArray, getCurrentCol } from '../sample';
+import { createDrumCubes, createMusicCubes, createOsciCubes, createHead, createSwitch } from './shapes';
 
 
 /* =====================================
@@ -33,6 +33,7 @@ const drumCubes = createDrumCubes(scene);
 const musicCubes = createMusicCubes(scene);
 const osciCubes = createOsciCubes(scene);
 const head = createHead(scene);
+const toggleSwitch = createSwitch(scene);
 
 
 /* =====================================
@@ -41,6 +42,7 @@ const head = createHead(scene);
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+let currentGrid = 'drums';
 
 const onClick = (event) => {
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -72,11 +74,27 @@ const onClick = (event) => {
       if (obj.active === 'false') {
         obj.material.color.set( 0xF07474 );
         obj.active = 'true';
+        musicSequencerGrid[row][col] = true;
+
+      } else {
+        obj.material.color.set( 0xaddfff );
+        obj.active = 'false';
+        musicSequencerGrid[row][col] = false;
+      }
+    }
+
+    if (obj.name === 'switch') {
+      currentGrid = currentGrid === 'drums' ? 'music' : 'drums';
+
+      if (obj.active === 'false') {
+        obj.material.color.set( 0xF07474 );
+        obj.active = 'true';
 
       } else {
         obj.material.color.set( 0xaddfff );
         obj.active = 'false';
       }
+
     }
   }
 }
@@ -88,14 +106,26 @@ window.addEventListener( 'click', onClick, false );
     ANIMATE
   ======================================== */
 
-const switchGrids = () => {
-  if (drumCubes[0].position.x < 6) {
+const switchToMusic = () => {
+  if (drumCubes[0].position.x < 10.5) {
     drumCubes.forEach( dc => {
       dc.position.x += 0.3;
     })
 
     musicCubes.forEach( mc => {
       mc.position.x += 0.3;
+    })
+  }
+}
+
+const switchToDrums = () => {
+  if (drumCubes[0].position.x > -6) {
+    drumCubes.forEach( dc => {
+      dc.position.x -= 0.3;
+    })
+
+    musicCubes.forEach( mc => {
+      mc.position.x -= 0.3;
     })
   }
 }
@@ -112,6 +142,12 @@ export const animate = () => {
   for (let i = 0; i < 128; i++) {
     osciCubes[i].position.y = dataArray[i] / 64.0 -5.3;
     osciCubes[i].position.z = dataArray[i] / 64.0 - 2;
+  }
+
+  if (currentGrid === 'music') {
+    switchToMusic();
+  } else {
+    switchToDrums();
   }
 
   renderer.render( scene, camera );

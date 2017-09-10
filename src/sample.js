@@ -1,11 +1,15 @@
 export const drumSequencerGrid = [];
+export const musicSequencerGrid = [];
 
 for (let row = 0; row < 4; row++) {
-  const rowArr = [];
+  const dRow = [];
+  const mRow = [];
   for (let col = 0; col < 16; col++) {
-    rowArr.push(false);
+    dRow.push(false);
+    mRow.push(false);
   }
-  drumSequencerGrid.push(rowArr);
+  drumSequencerGrid.push(dRow);
+  musicSequencerGrid.push(mRow);
 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -21,6 +25,10 @@ const sampleURLs = [
   'assets/samples/HHCD0.WAV',
   'assets/samples/ST0T0S7.WAV',
   'assets/samples/BT0A0D0.WAV',
+  'assets/samples/seq.wav',
+  'assets/samples/lowsynth.wav',
+  'assets/samples/pad.wav',
+  'assets/samples/bass.wav',
 ]
 
 const sampleArrayBuffers = [];
@@ -59,6 +67,14 @@ new Promise(getSample)
   .then( () => new Promise(decodeAudio) )
   .then( () => new Promise(getSample) )
   .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
 
 
 const playSample = (idx) => {
@@ -72,12 +88,16 @@ const playSample = (idx) => {
 let currentCol = 0;
 export const getCurrentCol = () => currentCol;
 const getDrumGrid = () => drumSequencerGrid;
+const getMusicGrid = () => musicSequencerGrid;
 
 setInterval( () => {
-  const row = getDrumGrid();
-  if (row[0][currentCol] === true) playSample(0);
-  if (row[1][currentCol] === true) playSample(1);
-  if (row[2][currentCol] === true) playSample(2);
-  if (row[3][currentCol] === true) playSample(3);
+  const drumRow = getDrumGrid();
+  const musicRow = getMusicGrid();
+
+  for (let i = 0; i < 4; i++) {
+    if (drumRow[i][currentCol] === true) playSample(i);
+    if (musicRow[i][currentCol] === true) playSample(i + 4);
+  }
+
   currentCol = (currentCol + 1) % 16;
 }, 125);

@@ -13,7 +13,7 @@ export const createDrumCubes = (scene) => {
 
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 16; col++) {
-      const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.01 );
+      const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.25 );
       const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
       const cube = new THREE.Mesh( geometry, material );
       cube.name = 'drumCube';
@@ -42,11 +42,11 @@ export const createMusicCubes = (scene) => {
 
   const musicCubes = [];
   const refY = 2;
-  const refX = -22;
+  const refX = -22.5;
 
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 16; col++) {
-      const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.01 );
+      const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.25 );
       const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
       const cube = new THREE.Mesh( geometry, material );
       cube.name = 'musicCube';
@@ -110,4 +110,22 @@ export const createHead = (scene) => {
   scene.add(head);
 
   return head;
+}
+
+
+/* =====================================
+    SWITCH
+  ======================================== */
+
+export const createSwitch = (scene) => {
+  const geometry = new THREE.SphereGeometry( 0.5, 1, 0.01 );
+  const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
+  const cube = new THREE.Mesh( geometry, material );
+  cube.name = 'switch';
+  cube.active = 'false';
+  cube.position.x = -7;
+  cube.position.y = 3;
+  scene.add(cube);
+
+  return cube;
 }
