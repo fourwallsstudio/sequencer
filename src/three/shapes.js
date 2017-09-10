@@ -75,7 +75,7 @@ export const createOsciCubes = (scene) => {
   const startX = -5;
 
   for (let i = 0; i < 128; i++) {
-    const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.01 );
+    const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.5 );
     const material = new THREE.MeshPhongMaterial( { color: 0x6C7A83 } );
     const cube = new THREE.Mesh( geometry, material );
     cube.name = 'osciCube';

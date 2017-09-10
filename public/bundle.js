@@ -44527,7 +44527,7 @@ const sampleURLs = [
   'assets/samples/ST0T0S7.WAV',
   'assets/samples/BT0A0D0.WAV',
   'assets/samples/seq.wav',
-  'assets/samples/lowsynth.wav',
+  'assets/samples/synth_short.wav',
   'assets/samples/pad.wav',
   'assets/samples/bass.wav',
 ]
@@ -44692,7 +44692,7 @@ const createOsciCubes = (scene) => {
   const startX = -5;
 
   for (let i = 0; i < 128; i++) {
-    const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.01 );
+    const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.5 );
     const material = new THREE.MeshPhongMaterial( { color: 0x6C7A83 } );
     const cube = new THREE.Mesh( geometry, material );
     cube.name = 'osciCube';

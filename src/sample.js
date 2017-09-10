@@ -26,7 +26,7 @@ const sampleURLs = [
   'assets/samples/ST0T0S7.WAV',
   'assets/samples/BT0A0D0.WAV',
   'assets/samples/seq.wav',
-  'assets/samples/lowsynth.wav',
+  'assets/samples/synth_short.wav',
   'assets/samples/pad.wav',
   'assets/samples/bass.wav',
 ]
