@@ -85,7 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sample__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shapes__ = __webpack_require__(4);
 const THREE = __webpack_require__(2);
+
 
 
 
@@ -118,64 +120,13 @@ scene.add(light1, light2);
 
 
 /* =====================================
-    CUBES
+    SHAPES
   ======================================== */
 
-const refY = -1;
-const refX = -6;
-
-for (let row = 0; row < 4; row++) {
-  for (let col = 0; col < 16; col++) {
-    const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.01 );
-    const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
-    const cube = new THREE.Mesh( geometry, material );
-    cube.name = 'cube';
-    cube.active = 'false';
-    cube.gridPosition = [col, row];
-    cube.position.x = refX + (col * 0.75);
-    cube.position.y = refY + row;
-
-    scene.add(cube);
-  }
-}
-
-
-/* =====================================
-    HEAD
-  ======================================== */
-
-  const headGeometry = new THREE.BoxGeometry( 0.5, 3.75, 1, 2, 2 );
-  const headMaterial = new THREE.MeshPhongMaterial({
-    color: 0xFFFC15,
-    transparent: true,
-    opacity: 0.3,
-    wireframe: true
-  });
-  const head = new THREE.Mesh( headGeometry, headMaterial );
-  head.position.z = -0.5;
-  head.position.x = -6;
-  head.position.y = 0.5;
-  scene.add(head);
-
-
-/* =====================================
-    OSCILLOSCOPE CUBES
-  ======================================== */
-
-const osciCubes = [];
-const startX = -5;
-
-for (let i = 0; i < 128; i++) {
-  const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.01 );
-  const material = new THREE.MeshPhongMaterial( { color: 0x6C7A83 } );
-  const cube = new THREE.Mesh( geometry, material );
-  cube.name = 'osciCube';
-  cube.position.x = startX + (i * 0.075);
-  cube.position.y = -3;
-
-  osciCubes.push(cube);
-  scene.add(cube);
-}
+const drumCubes = Object(__WEBPACK_IMPORTED_MODULE_1__shapes__["a" /* createDrumCubes */])(scene);
+const musicCubes = Object(__WEBPACK_IMPORTED_MODULE_1__shapes__["c" /* createMusicCubes */])(scene);
+const osciCubes = Object(__WEBPACK_IMPORTED_MODULE_1__shapes__["d" /* createOsciCubes */])(scene);
+const head = Object(__WEBPACK_IMPORTED_MODULE_1__shapes__["b" /* createHead */])(scene);
 
 
 /* =====================================
@@ -194,19 +145,32 @@ const onClick = (event) => {
 
   for ( let i = 0; i < intersects.length; i++ ) {
     const obj = intersects[ i ].object;
-    if (obj.name !== 'cube') continue;
+    if (obj.name === 'drumCube') {
+      const [row, col] = obj.gridPosition;
 
-    const [row, col] = obj.gridPosition;
+      if (obj.active === 'false') {
+        obj.material.color.set( 0xF07474 );
+        obj.active = 'true';
+        __WEBPACK_IMPORTED_MODULE_0__sample__["b" /* drumSequencerGrid */][row][col] = true;
 
-    if (obj.active === 'false') {
-      obj.material.color.set( 0xF07474 );
-      obj.active = 'true';
-      __WEBPACK_IMPORTED_MODULE_0__sample__["c" /* sequencerGrid */][row][col] = true;
+      } else {
+        obj.material.color.set( 0xaddfff );
+        obj.active = 'false';
+        __WEBPACK_IMPORTED_MODULE_0__sample__["b" /* drumSequencerGrid */][row][col] = false;
+      }
+    }
 
-    } else {
-      obj.material.color.set( 0xaddfff );
-      obj.active = 'false';
-      __WEBPACK_IMPORTED_MODULE_0__sample__["c" /* sequencerGrid */][row][col] = false;
+    if (obj.name === 'musicCube') {
+      const [row, col] = obj.gridPosition;
+
+      if (obj.active === 'false') {
+        obj.material.color.set( 0xF07474 );
+        obj.active = 'true';
+
+      } else {
+        obj.material.color.set( 0xaddfff );
+        obj.active = 'false';
+      }
     }
   }
 }
@@ -218,12 +182,24 @@ window.addEventListener( 'click', onClick, false );
     ANIMATE
   ======================================== */
 
+const switchGrids = () => {
+  if (drumCubes[0].position.x < 6) {
+    drumCubes.forEach( dc => {
+      dc.position.x += 0.3;
+    })
+
+    musicCubes.forEach( mc => {
+      mc.position.x += 0.3;
+    })
+  }
+}
+
 const dataArray = new Uint8Array(128);
 
 const animate = () => {
   requestAnimationFrame( animate );
 
-  head.position.x = -6 + (Object(__WEBPACK_IMPORTED_MODULE_0__sample__["b" /* getCurrentCol */])() * 0.75);
+  head.position.x = -6 + (Object(__WEBPACK_IMPORTED_MODULE_0__sample__["c" /* getCurrentCol */])() * 0.75);
 
   __WEBPACK_IMPORTED_MODULE_0__sample__["a" /* analyser */].getByteTimeDomainData(dataArray);
 
@@ -44481,11 +44457,16 @@ function CanvasRenderer() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const sequencerGrid = [];
-/* harmony export (immutable) */ __webpack_exports__["c"] = sequencerGrid;
+const drumSequencerGrid = [];
+/* harmony export (immutable) */ __webpack_exports__["b"] = drumSequencerGrid;
 
-for (let i = 0; i < 16; i++) {
-  sequencerGrid.push([false, false, false, false])
+
+for (let row = 0; row < 4; row++) {
+  const rowArr = [];
+  for (let col = 0; col < 16; col++) {
+    rowArr.push(false);
+  }
+  drumSequencerGrid.push(rowArr);
 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -44499,50 +44480,200 @@ analyser.connect(audioCtx.destination);
 
 
 const sampleURLs = [
-  'assets/samples/BT0A0D0.WAV',
-  'assets/samples/ST0T0S7.WAV',
+  'assets/samples/HANDCLP1.WAV',
   'assets/samples/HHCD0.WAV',
-  'assets/samples/HANDCLP1.WAV'
+  'assets/samples/ST0T0S7.WAV',
+  'assets/samples/BT0A0D0.WAV',
 ]
 
-const getSample = (idx) => {
-  const source = audioCtx.createBufferSource();
+const sampleArrayBuffers = [];
+
+const getSample = (resolve, reject) => {
+  const url = sampleURLs.shift();
   const request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
 
-    request.open('GET', sampleURLs[idx], true);
+  request.onload = () => {
+    sampleArrayBuffers.push(request.response);
+    resolve();
+  };
+  request.onerror = (e) => reject(e);
 
-    request.responseType = 'arraybuffer';
+  request.send();
+};
 
-    request.onload = function() {
-      const audioData = request.response;
+const decodeAudio = (resolve, reject) => {
+  const audioData = sampleArrayBuffers.pop();
 
-      audioCtx.decodeAudioData(audioData, function(buffer) {
-          source.buffer = buffer;
-          source.connect(analyser);
-          source.start(0);
-        },
-
-        function(e){ console.log("Error with decoding audio data" + e.err); });
-    }
-
-    request.send();
+  audioCtx.decodeAudioData(audioData, (buffer) => {
+      sampleArrayBuffers.push(buffer);
+      resolve();
+    },
+    (e) => reject(e.err)
+  )
 }
+
+new Promise(getSample)
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+
+
+const playSample = (idx) => {
+  const source = audioCtx.createBufferSource();
+  source.buffer = sampleArrayBuffers[idx];
+  source.connect(analyser);
+  source.start(0);
+};
 
 
 let currentCol = 0;
 const getCurrentCol = () => currentCol;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getCurrentCol;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getCurrentCol;
 
-const getGrid = () => sequencerGrid;
+const getDrumGrid = () => drumSequencerGrid;
 
 setInterval( () => {
-  const row = getGrid()[currentCol];
-  if (row[0] === true) getSample(0);
-  if (row[1] === true) getSample(1);
-  if (row[2] === true) getSample(2);
-  if (row[3] === true) getSample(3);
+  const row = getDrumGrid();
+  if (row[0][currentCol] === true) playSample(0);
+  if (row[1][currentCol] === true) playSample(1);
+  if (row[2][currentCol] === true) playSample(2);
+  if (row[3][currentCol] === true) playSample(3);
   currentCol = (currentCol + 1) % 16;
 }, 125);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const THREE = __webpack_require__(2);
+
+
+/* =====================================
+    DRUM CUBES
+  ======================================== */
+
+const createDrumCubes = (scene) => {
+
+  const drumCubes = [];
+  const refY = 2;
+  const refX = -6;
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 16; col++) {
+      const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.01 );
+      const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
+      const cube = new THREE.Mesh( geometry, material );
+      cube.name = 'drumCube';
+      cube.active = 'false';
+      cube.gridPosition = [row, col];
+      cube.position.x = refX + (col * 0.75);
+      cube.position.y = refY - row;
+
+      drumCubes.push(cube);
+      scene.add(cube);
+    }
+  }
+
+  return drumCubes;
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = createDrumCubes;
+
+
+
+
+
+/* =====================================
+    MUSIC CUBES
+  ======================================== */
+
+
+const createMusicCubes = (scene) => {
+
+  const musicCubes = [];
+  const refY = 2;
+  const refX = -22;
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 16; col++) {
+      const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.01 );
+      const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
+      const cube = new THREE.Mesh( geometry, material );
+      cube.name = 'musicCube';
+      cube.active = 'false';
+      cube.gridPosition = [row, col];
+      cube.position.x = refX + (col * 0.75);
+      cube.position.y = refY - row;
+
+      musicCubes.push(cube);
+      scene.add(cube);
+    }
+  }
+
+  return musicCubes;
+}
+/* harmony export (immutable) */ __webpack_exports__["c"] = createMusicCubes;
+
+
+
+
+/* =====================================
+    OSCILLOSCOPE CUBES
+  ======================================== */
+
+
+const createOsciCubes = (scene) => {
+  const osciCubes = [];
+  const startX = -5;
+
+  for (let i = 0; i < 128; i++) {
+    const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.01 );
+    const material = new THREE.MeshPhongMaterial( { color: 0x6C7A83 } );
+    const cube = new THREE.Mesh( geometry, material );
+    cube.name = 'osciCube';
+    cube.position.x = startX + (i * 0.075);
+    cube.position.y = -3;
+
+    osciCubes.push(cube);
+    scene.add(cube);
+  }
+
+  return osciCubes;
+}
+/* harmony export (immutable) */ __webpack_exports__["d"] = createOsciCubes;
+
+
+
+
+/* =====================================
+    HEAD
+  ======================================== */
+
+const createHead = (scene) => {
+  const headGeometry = new THREE.BoxGeometry( 0.5, 3.75, 1, 2, 2 );
+  const headMaterial = new THREE.MeshPhongMaterial({
+    color: 0xFFFC15,
+    transparent: true,
+    opacity: 0.3,
+    wireframe: true
+  });
+  const head = new THREE.Mesh( headGeometry, headMaterial );
+  head.position.z = -0.5;
+  head.position.x = -6;
+  head.position.y = 0.5;
+  scene.add(head);
+
+  return head;
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = createHead;
+
 
 
 /***/ })

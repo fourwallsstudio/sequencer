@@ -1,5 +1,6 @@
 const THREE = require('three');
-import { sequencerGrid, analyser, dataArray, getCurrentCol } from '../sample';
+import { drumSequencerGrid, analyser, dataArray, getCurrentCol } from '../sample';
+import { createDrumCubes, createMusicCubes, createOsciCubes, createHead } from './shapes';
 
 
 /* =====================================
@@ -25,64 +26,13 @@ scene.add(light1, light2);
 
 
 /* =====================================
-    CUBES
+    SHAPES
   ======================================== */
 
-const refY = -1;
-const refX = -6;
-
-for (let row = 0; row < 4; row++) {
-  for (let col = 0; col < 16; col++) {
-    const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.01 );
-    const material = new THREE.MeshPhongMaterial( { color: 0xaddfff } );
-    const cube = new THREE.Mesh( geometry, material );
-    cube.name = 'cube';
-    cube.active = 'false';
-    cube.gridPosition = [col, row];
-    cube.position.x = refX + (col * 0.75);
-    cube.position.y = refY + row;
-
-    scene.add(cube);
-  }
-}
-
-
-/* =====================================
-    HEAD
-  ======================================== */
-
-  const headGeometry = new THREE.BoxGeometry( 0.5, 3.75, 1, 2, 2 );
-  const headMaterial = new THREE.MeshPhongMaterial({
-    color: 0xFFFC15,
-    transparent: true,
-    opacity: 0.3,
-    wireframe: true
-  });
-  const head = new THREE.Mesh( headGeometry, headMaterial );
-  head.position.z = -0.5;
-  head.position.x = -6;
-  head.position.y = 0.5;
-  scene.add(head);
-
-
-/* =====================================
-    OSCILLOSCOPE CUBES
-  ======================================== */
-
-const osciCubes = [];
-const startX = -5;
-
-for (let i = 0; i < 128; i++) {
-  const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.01 );
-  const material = new THREE.MeshPhongMaterial( { color: 0x6C7A83 } );
-  const cube = new THREE.Mesh( geometry, material );
-  cube.name = 'osciCube';
-  cube.position.x = startX + (i * 0.075);
-  cube.position.y = -3;
-
-  osciCubes.push(cube);
-  scene.add(cube);
-}
+const drumCubes = createDrumCubes(scene);
+const musicCubes = createMusicCubes(scene);
+const osciCubes = createOsciCubes(scene);
+const head = createHead(scene);
 
 
 /* =====================================
@@ -101,19 +51,32 @@ const onClick = (event) => {
 
   for ( let i = 0; i < intersects.length; i++ ) {
     const obj = intersects[ i ].object;
-    if (obj.name !== 'cube') continue;
+    if (obj.name === 'drumCube') {
+      const [row, col] = obj.gridPosition;
 
-    const [row, col] = obj.gridPosition;
+      if (obj.active === 'false') {
+        obj.material.color.set( 0xF07474 );
+        obj.active = 'true';
+        drumSequencerGrid[row][col] = true;
 
-    if (obj.active === 'false') {
-      obj.material.color.set( 0xF07474 );
-      obj.active = 'true';
-      sequencerGrid[row][col] = true;
+      } else {
+        obj.material.color.set( 0xaddfff );
+        obj.active = 'false';
+        drumSequencerGrid[row][col] = false;
+      }
+    }
 
-    } else {
-      obj.material.color.set( 0xaddfff );
-      obj.active = 'false';
-      sequencerGrid[row][col] = false;
+    if (obj.name === 'musicCube') {
+      const [row, col] = obj.gridPosition;
+
+      if (obj.active === 'false') {
+        obj.material.color.set( 0xF07474 );
+        obj.active = 'true';
+
+      } else {
+        obj.material.color.set( 0xaddfff );
+        obj.active = 'false';
+      }
     }
   }
 }
@@ -124,6 +87,18 @@ window.addEventListener( 'click', onClick, false );
 /* =====================================
     ANIMATE
   ======================================== */
+
+const switchGrids = () => {
+  if (drumCubes[0].position.x < 6) {
+    drumCubes.forEach( dc => {
+      dc.position.x += 0.3;
+    })
+
+    musicCubes.forEach( mc => {
+      mc.position.x += 0.3;
+    })
+  }
+}
 
 const dataArray = new Uint8Array(128);
 

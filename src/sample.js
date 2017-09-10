@@ -1,6 +1,11 @@
-export const sequencerGrid = [];
-for (let i = 0; i < 16; i++) {
-  sequencerGrid.push([false, false, false, false])
+export const drumSequencerGrid = [];
+
+for (let row = 0; row < 4; row++) {
+  const rowArr = [];
+  for (let col = 0; col < 16; col++) {
+    rowArr.push(false);
+  }
+  drumSequencerGrid.push(rowArr);
 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -12,45 +17,67 @@ analyser.connect(audioCtx.destination);
 
 
 const sampleURLs = [
-  'assets/samples/BT0A0D0.WAV',
-  'assets/samples/ST0T0S7.WAV',
+  'assets/samples/HANDCLP1.WAV',
   'assets/samples/HHCD0.WAV',
-  'assets/samples/HANDCLP1.WAV'
+  'assets/samples/ST0T0S7.WAV',
+  'assets/samples/BT0A0D0.WAV',
 ]
 
-const getSample = (idx) => {
-  const source = audioCtx.createBufferSource();
+const sampleArrayBuffers = [];
+
+const getSample = (resolve, reject) => {
+  const url = sampleURLs.shift();
   const request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
 
-    request.open('GET', sampleURLs[idx], true);
+  request.onload = () => {
+    sampleArrayBuffers.push(request.response);
+    resolve();
+  };
+  request.onerror = (e) => reject(e);
 
-    request.responseType = 'arraybuffer';
+  request.send();
+};
 
-    request.onload = function() {
-      const audioData = request.response;
+const decodeAudio = (resolve, reject) => {
+  const audioData = sampleArrayBuffers.pop();
 
-      audioCtx.decodeAudioData(audioData, function(buffer) {
-          source.buffer = buffer;
-          source.connect(analyser);
-          source.start(0);
-        },
-
-        function(e){ console.log("Error with decoding audio data" + e.err); });
-    }
-
-    request.send();
+  audioCtx.decodeAudioData(audioData, (buffer) => {
+      sampleArrayBuffers.push(buffer);
+      resolve();
+    },
+    (e) => reject(e.err)
+  )
 }
+
+new Promise(getSample)
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+  .then( () => new Promise(getSample) )
+  .then( () => new Promise(decodeAudio) )
+
+
+const playSample = (idx) => {
+  const source = audioCtx.createBufferSource();
+  source.buffer = sampleArrayBuffers[idx];
+  source.connect(analyser);
+  source.start(0);
+};
 
 
 let currentCol = 0;
 export const getCurrentCol = () => currentCol;
-const getGrid = () => sequencerGrid;
+const getDrumGrid = () => drumSequencerGrid;
 
 setInterval( () => {
-  const row = getGrid()[currentCol];
-  if (row[0] === true) getSample(0);
-  if (row[1] === true) getSample(1);
-  if (row[2] === true) getSample(2);
-  if (row[3] === true) getSample(3);
+  const row = getDrumGrid();
+  if (row[0][currentCol] === true) playSample(0);
+  if (row[1][currentCol] === true) playSample(1);
+  if (row[2][currentCol] === true) playSample(2);
+  if (row[3][currentCol] === true) playSample(3);
   currentCol = (currentCol + 1) % 16;
 }, 125);
