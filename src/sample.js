@@ -31,50 +31,34 @@ const sampleURLs = [
   'assets/samples/bass.wav',
 ]
 
-const sampleArrayBuffers = [];
-
-const getSample = (resolve, reject) => {
-  const url = sampleURLs.shift();
-  const request = new XMLHttpRequest();
-  request.open('GET', url, true);
-  request.responseType = 'arraybuffer';
-
-  request.onload = () => {
-    sampleArrayBuffers.push(request.response);
-    resolve();
-  };
-  request.onerror = (e) => reject(e);
-
-  request.send();
-};
-
-const decodeAudio = (resolve, reject) => {
-  const audioData = sampleArrayBuffers.pop();
-
-  audioCtx.decodeAudioData(audioData, (buffer) => {
-      sampleArrayBuffers.push(buffer);
-      resolve();
-    },
-    (e) => reject(e.err)
-  )
+const getSample = (url) => {
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.responseType = 'arraybuffer';
+    request.onload = () => resolve(request.response);
+    request.onerror = (e) => reject(e);
+    request.send();
+  })
 }
 
-new Promise(getSample)
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
-  .then( () => new Promise(getSample) )
-  .then( () => new Promise(decodeAudio) )
+
+const decodeAudio = (audioData) => {
+  return new Promise((resolve, reject) => {
+    audioCtx.decodeAudioData(
+      audioData,
+      buffer => resolve(buffer),
+      e => reject(e.err)
+    )
+  })
+}
+
+let sampleArrayBuffers;
+let samplePromises = sampleURLs
+  .map( url => getSample(url)
+  .then( audioData => decodeAudio(audioData) ));
+  
+Promise.all(samplePromises).then( buffers => sampleArrayBuffers = buffers );
 
 
 const playSample = (idx) => {
