@@ -57,7 +57,9 @@ let samplePromises = sampleURLs
   .map( url => getSample(url)
   .then( audioData => decodeAudio(audioData) ));
 
-Promise.all(samplePromises).then( buffers => sampleArrayBuffers = buffers );
+Promise.all(samplePromises)
+  .then( buffers => sampleArrayBuffers = buffers )
+  .catch( err => console.log(err) );
 
 
 const playSample = (idx) => {
