@@ -44538,11 +44538,10 @@ const getSample = (url) => {
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
     request.onload = () => resolve(request.response);
-    request.onerror = (e) => reject(e);
+    request.onerror = e => reject(e);
     request.send();
   })
 }
-
 
 const decodeAudio = (audioData) => {
   return new Promise((resolve, reject) => {
@@ -44558,7 +44557,7 @@ let sampleArrayBuffers;
 let samplePromises = sampleURLs
   .map( url => getSample(url)
   .then( audioData => decodeAudio(audioData) ));
-  
+
 Promise.all(samplePromises).then( buffers => sampleArrayBuffers = buffers );
 
 
