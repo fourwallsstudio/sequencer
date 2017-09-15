@@ -9,7 +9,9 @@ export const createDrumCubes = (scene) => {
 
   const drumCubes = [];
   const refY = 2;
-  const refX = -6;
+  const refX = -5.625;
+
+
 
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 16; col++) {
@@ -44,6 +46,7 @@ export const createMusicCubes = (scene) => {
   const refY = 2;
   const refX = -22.5;
 
+
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 16; col++) {
       const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.25 );
@@ -72,7 +75,7 @@ export const createMusicCubes = (scene) => {
 
 export const createOsciCubes = (scene) => {
   const osciCubes = [];
-  const startX = -5;
+  const startX = -4.775;
 
   for (let i = 0; i < 128; i++) {
     const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.5 );
@@ -90,7 +93,6 @@ export const createOsciCubes = (scene) => {
 }
 
 
-
 /* =====================================
     HEAD
   ======================================== */
@@ -105,7 +107,7 @@ export const createHead = (scene) => {
   });
   const head = new THREE.Mesh( headGeometry, headMaterial );
   head.position.z = -0.5;
-  head.position.x = -6;
+  head.position.x = -5.625;
   head.position.y = 0.5;
   scene.add(head);
 

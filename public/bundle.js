@@ -44438,26 +44438,28 @@ window.addEventListener( 'click', onClick, false );
     ANIMATE
   ======================================== */
 
+const vector = 5.625 / 20;
+
 const switchToMusic = () => {
-  if (drumCubes[0].position.x < 10.5) {
+  if (drumCubes[0].position.x < 11.25) {
     drumCubes.forEach( dc => {
-      dc.position.x += 0.3;
+      dc.position.x += vector;
     })
 
     musicCubes.forEach( mc => {
-      mc.position.x += 0.3;
+      mc.position.x += vector;
     })
   }
 }
 
 const switchToDrums = () => {
-  if (drumCubes[0].position.x > -6) {
+  if (drumCubes[0].position.x > -5.625) {
     drumCubes.forEach( dc => {
-      dc.position.x -= 0.3;
+      dc.position.x -= vector;
     })
 
     musicCubes.forEach( mc => {
-      mc.position.x -= 0.3;
+      mc.position.x -= vector;
     })
   }
 }
@@ -44467,7 +44469,7 @@ const dataArray = new Uint8Array(128);
 const animate = () => {
   requestAnimationFrame( animate );
 
-  head.position.x = -6 + (Object(__WEBPACK_IMPORTED_MODULE_0__sample__["c" /* getCurrentCol */])() * 0.75);
+  head.position.x = -5.625 + (Object(__WEBPACK_IMPORTED_MODULE_0__sample__["c" /* getCurrentCol */])() * 0.75);
 
   __WEBPACK_IMPORTED_MODULE_0__sample__["a" /* analyser */].getByteTimeDomainData(dataArray);
 
@@ -44607,7 +44609,9 @@ const createDrumCubes = (scene) => {
 
   const drumCubes = [];
   const refY = 2;
-  const refX = -6;
+  const refX = -5.625;
+
+
 
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 16; col++) {
@@ -44644,6 +44648,7 @@ const createMusicCubes = (scene) => {
   const refY = 2;
   const refX = -22.5;
 
+
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 16; col++) {
       const geometry = new THREE.BoxGeometry( 0.5, 0.5, 0.25 );
@@ -44674,7 +44679,7 @@ const createMusicCubes = (scene) => {
 
 const createOsciCubes = (scene) => {
   const osciCubes = [];
-  const startX = -5;
+  const startX = -4.775;
 
   for (let i = 0; i < 128; i++) {
     const geometry = new THREE.CubeGeometry( 0.05, 0.05, 0.5 );
@@ -44694,7 +44699,6 @@ const createOsciCubes = (scene) => {
 
 
 
-
 /* =====================================
     HEAD
   ======================================== */
@@ -44709,7 +44713,7 @@ const createHead = (scene) => {
   });
   const head = new THREE.Mesh( headGeometry, headMaterial );
   head.position.z = -0.5;
-  head.position.x = -6;
+  head.position.x = -5.625;
   head.position.y = 0.5;
   scene.add(head);
 

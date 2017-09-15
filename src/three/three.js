@@ -106,26 +106,28 @@ window.addEventListener( 'click', onClick, false );
     ANIMATE
   ======================================== */
 
+const vector = 5.625 / 20;
+
 const switchToMusic = () => {
-  if (drumCubes[0].position.x < 10.5) {
+  if (drumCubes[0].position.x < 11.25) {
     drumCubes.forEach( dc => {
-      dc.position.x += 0.3;
+      dc.position.x += vector;
     })
 
     musicCubes.forEach( mc => {
-      mc.position.x += 0.3;
+      mc.position.x += vector;
     })
   }
 }
 
 const switchToDrums = () => {
-  if (drumCubes[0].position.x > -6) {
+  if (drumCubes[0].position.x > -5.625) {
     drumCubes.forEach( dc => {
-      dc.position.x -= 0.3;
+      dc.position.x -= vector;
     })
 
     musicCubes.forEach( mc => {
-      mc.position.x -= 0.3;
+      mc.position.x -= vector;
     })
   }
 }
@@ -135,7 +137,7 @@ const dataArray = new Uint8Array(128);
 export const animate = () => {
   requestAnimationFrame( animate );
 
-  head.position.x = -6 + (getCurrentCol() * 0.75);
+  head.position.x = -5.625 + (getCurrentCol() * 0.75);
 
   analyser.getByteTimeDomainData(dataArray);
 
